@@ -13,12 +13,6 @@ from threading import Thread
 array = []
 
 
-def to_bytes(sample):
-    buf = sample.get_buffer()
-    array = buf.extract_dup(0, buf.get_size())
-    return array
-
-
 def on_buffer(sink, data):
     global array
     sample = sink.emit("pull-sample")
@@ -42,7 +36,7 @@ if __name__ == '__main__':
     thread.start()
 
     pipeline = Gst.parse_launch(
-        "nvarguscamerasrc sensor_id=0 ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=120/1, format=NV12 ! tee name=t !  queue ! nvvidconv flip-method=0 ! jpegenc ! appsink emit-signals=True sync=false drop=true t. ! queue ! videoconvert ! autovideosink")
+        'nvarguscamerasrc sensor_id=0 tnr-strength=1 tnr-mode=2 ee-strength=0 ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=120/1, format=NV12 ! tee name=t ! queue ! videoconvert ! autovideosink t. ! queue ! nvvidconv flip-method=0 ! jpegenc ! appsink emit-signals=True sync=false drop=true ')
     pipeline.set_state(Gst.State.PLAYING)
     appsink = pipeline.get_by_name("appsink0")
     appsink.connect("new-sample", on_buffer, None)
