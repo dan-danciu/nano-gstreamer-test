@@ -38,7 +38,7 @@ if ret == Gst.StateChangeReturn.FAILURE:
 # Wait for EOS or error
 bus = pipeline.get_bus()
 msg = bus.timed_pop_filtered(
-    Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)
+    Gst.SECOND * 5, Gst.MessageType.ERROR | Gst.MessageType.EOS)
 # Parse message
 if msg:
     if msg.type == Gst.MessageType.ERROR:
